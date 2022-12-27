@@ -5,3 +5,4 @@ wheel
 requests
 tqdm
 bcrypt
+nltk
