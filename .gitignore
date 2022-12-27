@@ -1,0 +1,6 @@
+.ipynb_checkpoints
+__pycache__
+.vscode
+.idea
+*.ipynb
+env3.9

@@ -1,0 +1,7 @@
+praw
+pandas 
+numpy 
+wheel
+requests
+tqdm
+bcrypt
