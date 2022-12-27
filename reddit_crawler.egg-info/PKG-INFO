@@ -1,7 +1,0 @@
-Metadata-Version: 2.1
-Name: reddit-crawler
-Version: 0.0.1
-Summary: A scraper which will scrape out multimedia data from reddit.
-Author: Aneesh Aparajit G
-
-This package will help you scrape data from reddit for any of your data science or data analytics project. This is a wrapper on the PRAW package customized for easy data extraction.

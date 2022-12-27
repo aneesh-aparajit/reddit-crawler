@@ -1,5 +1,5 @@
 import nltk
-from reddit_crawler.crawler import Crawler
+from reddit_multimodal.crawler import Crawler
 import argparse
 
 # nltk.download("vader_lexicon")
