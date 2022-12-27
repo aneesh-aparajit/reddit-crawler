@@ -7,7 +7,7 @@ long_description = (this_directory / "README.md").read_text()
 
 setup(
     name="reddit_multimodal",
-    version="1.2.0",
+    version="1.3.0",
     description="A scraper which will scrape out multimedia data from reddit.",
     long_description=long_description,
     long_description_content_type="text/markdown",
