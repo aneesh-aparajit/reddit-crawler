@@ -1,0 +1,8 @@
+README.md
+setup.py
+reddit_crawler/crawler.py
+reddit_crawler.egg-info/PKG-INFO
+reddit_crawler.egg-info/SOURCES.txt
+reddit_crawler.egg-info/dependency_links.txt
+reddit_crawler.egg-info/requires.txt
+reddit_crawler.egg-info/top_level.txt
