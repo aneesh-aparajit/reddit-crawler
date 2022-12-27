@@ -109,7 +109,7 @@ class Crawler(object):
             posts = self._get_posts(
                 subreddit_name=subreddit_name, sort_by=sort_by, limit=limit
             )
-            for p in tqdm(posts):
+            for p in posts:
 
                 data["extracted_time"].append(datetime.now())
                 data["subreddit"].append(f"r/{subreddit_name}")
