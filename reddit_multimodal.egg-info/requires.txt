@@ -2,3 +2,4 @@ praw
 pandas
 numpy
 requests
+bcrypt

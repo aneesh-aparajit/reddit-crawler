@@ -2,7 +2,7 @@ import nltk
 from reddit_multimodal.crawler import Crawler
 import argparse
 
-# nltk.download("vader_lexicon")
+nltk.download("vader_lexicon")
 
 if __name__ == "__main__":
 
