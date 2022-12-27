@@ -8,10 +8,17 @@ from tqdm.auto import tqdm
 import bcrypt
 import os
 from nltk.sentiment.vader import SentimentIntensityAnalyzer as SIA
+from pprint import pprint
 
 
 class Crawler(object):
-    def __init__(self, client_id: str, client_secret: str, user_agent: str) -> None:
+    def __init__(
+        self,
+        client_id: str,
+        client_secret: str,
+        user_agent: str,
+        base_dir: str = "./data/",
+    ) -> None:
         """Initializes the object of Crawler, which will eventually scrape the data from Reddit.
 
         Args:
@@ -28,9 +35,10 @@ class Crawler(object):
             client_secret=self.client_secret,
             user_agent=self.user_agent,
         )
+        self.base_dir = base_dir
         self.sia = SIA()
 
-    def get_posts(
+    def _get_posts(
         self, subreddit_name: str, sort_by: str = "top", limit: int | None = None
     ):
         """This method of Crawler, retrieves the posts of a particular subreddit ordered by the sort_by parameter.
@@ -53,7 +61,7 @@ class Crawler(object):
         posts = iterator(limit=limit)
         return posts
 
-    def return_posts_pandas(
+    def get_posts(
         self,
         subreddit_names: List[str],
         sort_by: str = "top",
@@ -88,24 +96,24 @@ class Crawler(object):
             "multimedia_type": [],
             "extracted_time": [],
             "body": [],
-            "subreddit_names": [],
+            "subreddit": [],
             "title_polarity_neg": [],
             "title_polarity_pos": [],
             "title_compound": [],
             "body_polarity_neg": [],
             "body_polarity_pos": [],
             "body_compound": [],
-            "urls": []
+            "urls": [],
         }
 
         for subreddit_name in subreddit_names:
-            posts = self.get_posts(
+            posts = self._get_posts(
                 subreddit_name=subreddit_name, sort_by=sort_by, limit=limit
             )
             for p in tqdm(posts):
 
                 data["extracted_time"].append(datetime.now())
-                data["subreddit_names"].append(subreddit_name)
+                data["subreddit"].append(f"r/{subreddit_name}")
                 data["titles"].append(p.title)
 
                 if p.author is not None:
@@ -149,6 +157,10 @@ class Crawler(object):
                 data["body_polarity_pos"].append(body_polarity["pos"])
                 data["body_compound"].append(body_polarity["compound"])
 
+                data["created"].append(p.created_utc)
+
+        print({k: len(v) for k, v in data.items()})
+
         df = pd.DataFrame(data)
 
         if os.path.exists("./data"):
@@ -159,17 +171,125 @@ class Crawler(object):
 
         if save:
             if save_format == "csv":
-                df.to_csv("./data/posts.csv")
+                df.to_csv(os.path.join(self.base_dir, "posts.csv"))
             elif save_format == "tsv":
-                df.to_csv("./data/posts.tsv", sep="\t")
+                df.to_csv(os.path.join(self.base_dir, "posts.tsv"), sep="\t")
             elif save_format == "parquet":
-                df.to_parquet("./data/posts.parquet")
+                df.to_csv(os.path.join(self.base_dir, "posts.parquet"))
             elif save_format == "json":
-                df.to_json("./data/posts.json")
+                df.to_csv(os.path.join(self.base_dir, "posts.json"))
             elif save_format == "sql":
-                df.to_sql("./data/posts.sql")
+                df.to_csv(os.path.join(self.base_dir, "posts.sql"))
             elif save_format == "pickle":
-                df.to_pickle("./data/posts.pkl")
+                df.to_csv(os.path.join(self.base_dir, "posts.pkl"))
+            else:
+                raise NotImplementedError(
+                    """The format, you want the code is not implemented. But, you can extend the Crawler.get_posts() method by maneuvering the return object accordingly.
+                    
+                    Also, you may want to try entering the format in lower case!
+                    """
+                )
+
+        return df
+
+    def get_comments(
+        self,
+        subreddit_names: List[str],
+        sort_by: str = "top",
+        limit: int | None = None,
+        save: bool = True,
+        save_format: str = "csv",
+    ) -> pd.DataFrame:
+
+        """This method will return the comments for each post.
+
+        Note: The name of the user will be encoded.
+
+        Args:
+            - subreddit_names (List[str]): This parameter expects a list which contains the names of the subreddit you want to scrape through.
+            - sort_by (str): This parameter is a query to get the relevant posts.
+            - limit (int | None): This is to control the number of parameters you want. None by default.
+            - save (bool): This to say if you want to save the dataset or not. True by default.
+            - save_format (str): This is to specify the format in which youn want to save the data. "csv" by default. The characters are expected to be lower case.
+
+        Returns:
+            Although this method will save the data in which ever format, it will return to you a `pd.DataFrame` object.
+        """
+
+        data = {
+            "post_title": [],
+            "post_user": [],
+            "comment": [],
+            "comment_user": [],
+            "post_created": [],
+            "subreddit": [],
+            "comment_created": [],
+        }
+
+        for subreddit_name in subreddit_names:
+            posts = self._get_posts(
+                subreddit_name=subreddit_name, sort_by=sort_by, limit=limit
+            )
+
+            for p in posts:
+                lim = 0
+                for c in p.comments:
+                    try:
+                        (
+                            title,
+                            post_user,
+                            comment,
+                            comment_user,
+                            post_created,
+                            comment_created,
+                            subreddit,
+                        ) = [None] * 7
+
+                        title = p.title
+                        post_user = p.author.name if p.author is not None else np.nan
+                        comment = c.body
+                        comment_user = c.author.name if c.author is not None else np.nan
+                        subreddit = subreddit_name
+                        post_created = p.created_utc
+                        comment_created = c.created_utc
+
+                        data["post_title"].append(title)
+                        data["post_user"].append(post_user)
+                        data["post_created"].append(post_created)
+                        data["comment"].append(comment)
+                        data["comment_user"].append(comment_user)
+                        data["comment_created"].append(comment_created)
+                        data["subreddit"].append(subreddit)
+
+                        lim += 1
+
+                    except:
+                        break
+
+                    if lim == limit:
+                        break
+
+        df = pd.DataFrame(data)
+
+        if os.path.exists("./data"):
+            pass
+        else:
+            os.mkdir("./data")
+            print(f"./data/ did not exist. So, created file.")
+
+        if save:
+            if save_format == "csv":
+                df.to_csv(os.path.join(self.base_dir, "comments.csv"))
+            elif save_format == "tsv":
+                df.to_csv(os.path.join(self.base_dir, "comments.tsv"), sep="\t")
+            elif save_format == "parquet":
+                df.to_csv(os.path.join(self.base_dir, "comments.parquet"))
+            elif save_format == "json":
+                df.to_csv(os.path.join(self.base_dir, "comments.json"))
+            elif save_format == "sql":
+                df.to_csv(os.path.join(self.base_dir, "comments.sql"))
+            elif save_format == "pickle":
+                df.to_csv(os.path.join(self.base_dir, "comments.pkl"))
             else:
                 raise NotImplementedError(
                     """The format, you want the code is not implemented. But, you can extend the Crawler.get_posts() method by maneuvering the return object accordingly.

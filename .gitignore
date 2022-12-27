@@ -4,3 +4,4 @@ __pycache__
 .idea
 *.ipynb
 env3.9
+data

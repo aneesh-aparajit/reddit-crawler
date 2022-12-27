@@ -6,3 +6,4 @@ requests
 tqdm
 bcrypt
 nltk
+argparse
