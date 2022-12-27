@@ -1,0 +1,4 @@
+praw
+pandas
+numpy
+requests

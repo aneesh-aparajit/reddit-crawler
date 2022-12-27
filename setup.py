@@ -1,10 +1,16 @@
 from setuptools import setup
 
+from pathlib import Path
+
+this_directory = Path(__file__).parent
+long_description = (this_directory / "README.md").read_text()
+
 setup(
-    name="reddit_crawler",
-    version="1.0.0",
+    name="reddit_multimodal",
+    version="2.0.0",
     description="A scraper which will scrape out multimedia data from reddit.",
-    long_description="""This package will help you scrape data from reddit for any of your data science or data analytics project. This is a wrapper on the PRAW package customized for easy data extraction.""",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
     author="Aneesh Aparajit G",
     packages=["reddit_multimodal"],
     install_requires=["praw", "pandas", "numpy", "requests"],
