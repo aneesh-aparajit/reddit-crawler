@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 from typing import List
-from tqdm import tqdm
+from tqdm.auto import tqdm
 import bcrypt
 import os
 from nltk.sentiment.vader import SentimentIntensityAnalyzer as SIA
@@ -30,7 +30,6 @@ class Crawler(object):
         )
         self.sia = SIA()
 
-    @classmethod
     def get_posts(
         self, subreddit_name: str, sort_by: str = "top", limit: int | None = None
     ):
@@ -65,10 +64,12 @@ class Crawler(object):
 
         """This method will help us extract the posts from a list of subreddits. This method saves the dataframe in different formats based on the request.
 
+        Note: The name of the user will be encoded.
+
         Args:
             - subreddit_names (List[str]): This parameter expects a list which contains the names of the subreddit you want to scrape through.
             - sort_by (str): This parameter is a query to get the relevant posts.
-            - limit (int | None): This is too control the number of parameters you want. None by default.
+            - limit (int | None): This is to control the number of parameters you want. None by default.
             - save (bool): This to say if you want to save the dataset or not. True by default.
             - save_format (str): This is to specify the format in which youn want to save the data. "csv" by default. The characters are expected to be lower case.
 
@@ -94,19 +95,26 @@ class Crawler(object):
             "body_polarity_neg": [],
             "body_polarity_pos": [],
             "body_compound": [],
+            "urls": []
         }
 
-        for subreddit_name in tqdm(subreddit_names):
+        for subreddit_name in subreddit_names:
             posts = self.get_posts(
                 subreddit_name=subreddit_name, sort_by=sort_by, limit=limit
             )
-            for p in posts:
+            for p in tqdm(posts):
+
                 data["extracted_time"].append(datetime.now())
                 data["subreddit_names"].append(subreddit_name)
                 data["titles"].append(p.title)
-                data["authors"].append(
-                    bcrypt.hashpw(p.author.encode("utf8"), bcrypt.gensalt())
-                )
+
+                if p.author is not None:
+                    data["authors"].append(
+                        bcrypt.hashpw(p.author.name.encode("utf8"), bcrypt.gensalt())
+                    )
+                else:
+                    data["authors"].append(np.nan)
+
                 data["upvote_ratios"].append(p.upvote_ratio)
                 data["upvotes"].append(p.score)
                 data["nsfw"].append(p.over_18)
@@ -125,7 +133,7 @@ class Crawler(object):
                         data["multimedia_type"].append("image")
 
                     else:
-                        data["multimedia_url"].append(np.na)
+                        data["multimedia_url"].append(np.nan)
                         data["multimedia_type"].append("text")
 
                 data["body"].append(p.selftext)
