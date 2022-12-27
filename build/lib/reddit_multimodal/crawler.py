@@ -4,7 +4,6 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 from typing import List
-from tqdm.auto import tqdm
 import bcrypt
 import os
 from nltk.sentiment.vader import SentimentIntensityAnalyzer as SIA
