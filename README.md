@@ -8,6 +8,8 @@ You can pip install this to integrate with some other application, or use it as 
 
 - PyPI Link:  https://pypi.org/project/reddit-multimodal-crawler/
 
+[![Downloads](https://pepy.tech/badge/reddit-multimodal-crawler)](https://pepy.tech/project/reddit-multimodal-crawler)
+
 
 ```commandLine
 pip install reddit-multimodal-crawler
