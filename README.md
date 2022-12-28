@@ -1,4 +1,4 @@
-# Reddit Multimodal Crawler
+# Reddit Multimodal Crawler [[![Downloads](https://pepy.tech/badge/reddit-multimodal-crawler)](https://pepy.tech/project/reddit-multimodal-crawler)]
 
 This is a wrapper to the `PRAW` package to scrape content from image in the form of `csv`, `json`, `tsv`, `sql` files.
 
@@ -7,9 +7,6 @@ This repository will help you scrape various subreddits, and will return to you 
 You can pip install this to integrate with some other application, or use it as an commandline application.
 
 - PyPI Link:  https://pypi.org/project/reddit-multimodal-crawler/
-
-[![Downloads](https://pepy.tech/badge/reddit-multimodal-crawler)](https://pepy.tech/project/reddit-multimodal-crawler)
-
 
 ```commandLine
 pip install reddit-multimodal-crawler
