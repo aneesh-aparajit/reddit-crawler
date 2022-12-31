@@ -1,4 +1,4 @@
-# Reddit Multimodal Crawler [![Downloads](https://static.pepy.tech/badge/reddit-multimodal-crawler)](https://pepy.tech/project/reddit-multimodal-crawler)
+# Reddit Multimodal Crawler [![Downloads](https://static.pepy.tech/personalized-badge/reddit-multimodal-crawler?period=total&units=abbreviation&left_color=blue&right_color=blue&left_text=Downloads)](https://pepy.tech/project/reddit-multimodal-crawler)
 
 This is a wrapper to the `PRAW` package to scrape content from image in the form of `csv`, `json`, `tsv`, `sql` files.
 
